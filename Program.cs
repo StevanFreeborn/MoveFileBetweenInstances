@@ -52,12 +52,14 @@ class Program
     {
       if (file is not null)
       {
+        return 1;
+      }
 
-        var requestUri = $"{baseUrl}/Files";
-        var streamContent = new StreamContent(file.FileStream);
-        streamContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
+      var requestUri = $"{baseUrl}/Files";
+      var streamContent = new StreamContent(file.FileStream);
+      streamContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
 
-        var multiPartContent = new MultipartFormDataContent
+      var multiPartContent = new MultipartFormDataContent
         {
           { streamContent, "File", file.FileName },
           { new StringContent(recordId.ToString()), "RecordId" },
@@ -65,20 +67,17 @@ class Program
           { new StringContent(""), "Notes" },
         };
 
-        var httpRequest = new HttpRequestMessage(HttpMethod.Post, requestUri)
-        {
-          Content = multiPartContent,
-        };
+      var httpRequest = new HttpRequestMessage(HttpMethod.Post, requestUri)
+      {
+        Content = multiPartContent,
+      };
 
-        httpRequest.Headers.Add("x-apikey", apiKey);
-        httpRequest.Headers.Add("x-api-version", "2");
+      httpRequest.Headers.Add("x-apikey", apiKey);
+      httpRequest.Headers.Add("x-api-version", "2");
 
-        var httpClient = new HttpClient();
-        var httpResponse = await httpClient.SendAsync(httpRequest);
-        return httpResponse.StatusCode == System.Net.HttpStatusCode.Created ? 0 : 1;
-      }
-
-      return 1;
+      var httpClient = new HttpClient();
+      var httpResponse = await httpClient.SendAsync(httpRequest);
+      return httpResponse.StatusCode == System.Net.HttpStatusCode.Created ? 0 : 1;
     }
   }
 
